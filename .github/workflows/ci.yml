@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Unit tests
+        run: pytest -q
+      - name: Notebook runs top to bottom
+        working-directory: notebooks
+        run: jupyter nbconvert --to notebook --execute ab_model_ab_test_report.ipynb --output /tmp/executed.ipynb --ExecutePreprocessor.timeout=600
